@@ -1,0 +1,3 @@
+docker run -d --name mysql-base -e MYSQL_ROOT_PASSWORD=123 -p 3306:3306 mysql:latest --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci       // zainstalowanie mysql w dockerze
+mysql -u root -p        // logowanie do bazy z poziomu dockera
+
