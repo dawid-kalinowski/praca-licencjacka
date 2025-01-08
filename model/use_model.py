@@ -1,8 +1,8 @@
 import joblib
 
 # Wczytanie modelu i wektoryzatora
-model = joblib.load("model/language_model.pkl")
-vectorizer = joblib.load("model/tfidf_vectorizer.pkl")
+model = joblib.load("models/language_model1.pkl")
+vectorizer = joblib.load("models/tfidf_vectorizer1.pkl")
 
 # Funkcja do przewidywania języka
 def przewiduj_jezyk(tekst):

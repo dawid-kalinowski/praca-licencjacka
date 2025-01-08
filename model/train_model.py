@@ -42,5 +42,5 @@ print(classification_report(y_test, y_pred))
 
 # Zapis modelu i wektoryzatora
 os.makedirs("model", exist_ok=True)
-joblib.dump(model, "model/language_model1.pkl")
-joblib.dump(vectorizer, "model/tfidf_vectorizer1.pkl")
+joblib.dump(model, "models/language_model3.pkl")
+joblib.dump(vectorizer, "models/tfidf_vectorizer3.pkl")
