@@ -1,5 +1,5 @@
 Ważne:
-- możliwość wyboru języków w fiszkach
+-  możliwość podzielenia słów na zestawy, że np. zestaw 1, zestaw 2, i uzytkownik dodaje sobie słowa. I bez znaczenia jaki język, użytkownik dodaje sobie jakie chce
 - przyciski "wróć" w logowaniu i rejestrowaniu
 
 Zrobić, jeżeli starczy czasu:
