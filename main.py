@@ -12,12 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-# CORS(app)  # Włączamy CORS dla wszystkich endpointów
-
-# Konfiguracja aplikacji
-# app.secret_key = os.getenv('SECRET_KEY', 'secret')
 app.secret_key = 'secret'
-# app.config['MONGO_URI'] = 'mongodb://localhost:27017/word_db'
 app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/word_db')
 app.permanent_session_lifetime = timedelta(minutes=30)
 
@@ -25,21 +20,20 @@ app.permanent_session_lifetime = timedelta(minutes=30)
 mongo = PyMongo(app)
 users_collection = mongo.db.users
 words_collection = mongo.db.words
+history_collection = mongo.db.history
+saved_words_collection = mongo.db.saved_words
 
-# Ładowanie modelu i wektoryzatora dla rozpoznawania języka
 MODEL_PATH = "model/language_model1.pkl"
 VECTORIZER_PATH = "model/tfidf_vectorizer1.pkl"
 
 model = joblib.load(MODEL_PATH)
 vectorizer = joblib.load(VECTORIZER_PATH)
 
-# ====== ROUTES ======
-
 @app.route('/')
 def home():
     if 'user' in session:
-        return f"Witaj, {session['user']}! <a href='/logout'>Wyloguj</a>"
-    return "<a href='/login'>Zaloguj</a> lub <a href='/register'>Zarejestruj</a>"
+        return render_template('home.html', username=session['user'])
+    return render_template('index.html')
 
 # ============= MODUŁ LOGOWANIA =============
 
@@ -57,7 +51,6 @@ def register():
         users_collection.insert_one({'username': username, 'password': hashed_password})
         flash('Rejestracja zakończona sukcesem. Możesz się teraz zalogować.')
         return redirect(url_for('login'))
-
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -74,7 +67,6 @@ def login():
             return redirect(url_for('home'))
         else:
             flash('Nieprawidłowa nazwa użytkownika lub hasło.')
-
     return render_template('login.html')
 
 @app.route('/logout')
@@ -91,15 +83,17 @@ def quiz_page():
 
 @app.route('/get_words', methods=['GET'])
 def get_words():
-    all_words = list(words_collection.find({}, {'_id': 0}))  # Pobierz wszystkie słowa, bez pola _id
+    all_words = list(words_collection.find({}, {'_id': 0}))
     selected_words = random.sample(all_words, 10) if len(all_words) >= 10 else all_words
     return jsonify(selected_words)
 
 @app.route('/check_word', methods=['POST'])
 def check_word():
+    if 'user' not in session:
+        return jsonify({'error': 'Musisz być zalogowany'}), 401
+    
     user_answer = request.json.get('answer')
     correct_word = request.json.get('word')
-
     is_correct = user_answer.lower() == correct_word['english'].lower()
     result = {
         'polish': correct_word['polish'],
@@ -107,10 +101,62 @@ def check_word():
         'correct_answer': correct_word['english'],
         'correct': is_correct
     }
-
+    history_collection.insert_one({
+        'username': session['user'],
+        'word': correct_word['english'],
+        'your_answer': user_answer,
+        'correct': is_correct
+    })
     return jsonify(result)
 
-# ============= ROZPOZNAWANIE JĘZYKA =============
+@app.route('/quiz/history', methods=['GET'])
+def quiz_history():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    history = list(history_collection.find({'username': session['user']}, {'_id': 0}))
+    return render_template('history.html', history=history)
+
+# ============= ZAPISYWANIE SŁÓW =============
+
+@app.route('/words', methods=['GET'])
+def words_page():
+    all_words = list(words_collection.find({}, {'_id': 0}))
+    return render_template('words.html', words=all_words)
+
+@app.route('/save_word', methods=['POST'])
+def save_word():
+    if 'user' not in session:
+        return jsonify({'error': 'Musisz być zalogowany'}), 401
+    
+    word = request.json.get('word')
+    if not word:
+        return jsonify({'error': 'Brak słowa do zapisania'}), 400
+    
+    saved_words_collection.update_one(
+        {'username': session['user']},
+        {'$addToSet': {'words': word}},
+        upsert=True
+    )
+    return jsonify({'message': 'Słowo zapisane'})
+
+@app.route('/saved_words', methods=['GET'])
+def saved_words_page():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    saved_words = saved_words_collection.find_one({'username': session['user']}, {'_id': 0, 'words': 1})
+    words = saved_words.get('words', []) if saved_words else []
+    return render_template('saved_words.html', words=words)
+
+@app.route('/saved_words_quiz', methods=['GET'])
+def saved_words_quiz():
+    if 'user' not in session:
+        return jsonify({'error': 'Musisz być zalogowany'}), 401
+    
+    saved_words = saved_words_collection.find_one({'username': session['user']}, {'_id': 0, 'words': 1})
+    words = saved_words.get('words', []) if saved_words else []
+    selected_words = random.sample(words, min(10, len(words)))
+    return jsonify(selected_words)
+
 
 @app.route('/detect-language', methods=['POST'])
 def detect_language():
@@ -126,6 +172,11 @@ def detect_language():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# ============= START APLIKACJI =============
+
+
+@app.route('/detect-language')
+def detect_language_page():
+    return render_template('detect_language.html')
+    
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

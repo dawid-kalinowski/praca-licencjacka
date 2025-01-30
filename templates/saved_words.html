@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Zapisane Słowa</title>
+    <script>
+        async function startSavedQuiz() {
+            const response = await fetch('/saved_words_quiz');
+            const words = await response.json();
+            document.getElementById("quiz-container").innerHTML = words.map(word =>
+                `<p>${word}: <input type="text" onblur="checkAnswer(this, '${word}')"></p>`
+            ).join('');
+        }
+
+        async function checkAnswer(input, correct) {
+            const userAnswer = input.value.trim();
+            if (userAnswer.toLowerCase() === correct.toLowerCase()) {
+                input.style.backgroundColor = "lightgreen";
+            } else {
+                input.style.backgroundColor = "lightcoral";
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Zapisane Słowa</h1>
+    <ul>
+        {% for word in words %}
+            <li>{{ word }}</li>
+        {% endfor %}
+    </ul>
+    <button onclick="startSavedQuiz()">Rozpocznij quiz z zapisanych słów</button>
+    <div id="quiz-container"></div>
+    <a href="{{ url_for('home') }}">Powrót</a>
+</body>
+</html>

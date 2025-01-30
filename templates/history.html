@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Historia Quizów</title>
+</head>
+<body>
+    <h1>Twoja Historia Quizów</h1>
+    <ul>
+        {% for entry in history %}
+        <li>
+            {{ entry.word }} - Twoja odpowiedź: {{ entry.your_answer }} - 
+            {% if entry.correct %} ✅ {% else %} ❌ {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('home') }}">Powrót</a>
+</body>
+</html>
