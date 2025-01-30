@@ -19,6 +19,22 @@
                 alert(result.error);
             }
         }
+
+
+        async function startSavedWordsQuiz() {
+        const response = await fetch('/get_saved_words');
+        const words = await response.json();
+        
+        if (words.length === 0) {
+            alert("Brak zapisanych słów do quizu.");
+            return;
+        }
+
+        sessionStorage.setItem('quizWords', JSON.stringify(words));
+        window.location.href = "/quiz?saved=true";
+        }
+
+
     </script>
 </head>
 <body>
@@ -34,6 +50,7 @@
                 <li class="empty-message">Brak zapisanych słów</li>
             {% endfor %}
         </ul>
+        <a href="#" onclick="startSavedWordsQuiz()">Quiz z zapisanych słów</a>
         <a href="{{ url_for('home') }}" class="back-button">Powrót</a>
     </div>
 </body>

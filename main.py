@@ -161,8 +161,7 @@ def save_word():
 def saved_words_page():
     if 'user' not in session:
         return redirect(url_for('login'))
-    
-    # Znajdź zapisane słowa użytkownika
+
     saved_words = saved_words_collection.find_one({'username': session['user']}, {'_id': 0, 'words': 1})
     
     words = []
@@ -171,6 +170,20 @@ def saved_words_page():
         words = list(words_collection.find({'_id': {'$in': word_ids}}, {'_id': 1, 'polish': 1, 'english': 1}))
     
     return render_template('saved_words.html', words=words)
+
+@app.route('/get_saved_words', methods=['GET'])
+def get_saved_words():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    
+    # Znajdź zapisane słowa użytkownika
+    saved_words = saved_words_collection.find_one({'username': session['user']}, {'_id': 0, 'words': 1})
+    
+    words = []
+    if saved_words and 'words' in saved_words:
+        word_ids = saved_words['words']
+        words = list(words_collection.find({'_id': {'$in': word_ids}}, {'_id': 0, 'polish': 1, 'english': 1}))
+    return jsonify(words)
 
 @app.route('/delete_word', methods=['POST'])
 def delete_word():
@@ -197,17 +210,6 @@ def delete_word():
         return jsonify({'error': 'Nie znaleziono słowa do usunięcia'}), 400
 
     return jsonify({'message': 'Słowo usunięte'})
-
-@app.route('/saved_words_quiz', methods=['GET'])
-def saved_words_quiz():
-    if 'user' not in session:
-        return jsonify({'error': 'Musisz być zalogowany'}), 401
-    
-    saved_words = saved_words_collection.find_one({'username': session['user']}, {'_id': 0, 'words': 1})
-    words = saved_words.get('words', []) if saved_words else []
-    selected_words = random.sample(words, min(10, len(words)))
-    return jsonify(selected_words)
-
 
 @app.route('/detect-language', methods=['POST'])
 def detect_language():

@@ -1,4 +1,3 @@
-<!-- quiz.html -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -6,6 +5,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz Słów</title>
   <link rel="stylesheet" href="/static/css/quiz.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        if (urlParams.get('saved') === 'true') {
+            const savedWords = JSON.parse(sessionStorage.getItem('quizWords'));
+            if (savedWords) {
+                startQuiz(savedWords);
+            } else {
+                alert("Brak zapisanych słów do quizu.");
+            }
+        } else {
+            fetch('/get_words')
+                .then(response => response.json())
+                .then(words => {
+                    if (words.length > 0) {
+                        startQuiz(words);
+                    } else {
+                        alert("Brak słów do quizu.");
+                    }
+                })
+                .catch(error => console.error("Błąd pobierania słów:", error));
+        }
+    });
+    
+    let words = [];
+    let currentIndex = 0;
+    let quizActive = false;
+
+    function startQuiz(newWords) {
+        words = newWords;
+        currentIndex = 0;
+        quizActive = true;
+        document.getElementById('results').innerHTML = '';
+        document.getElementById('end-btn').style.display = 'inline';
+        showNextWord();
+    }
+
+    function endQuiz() {
+      quizActive = false;
+      document.getElementById('quiz').innerHTML = '<p>Quiz zakończony!</p>';
+      document.getElementById('end-btn').style.display = 'none';
+    }
+
+    async function checkAnswer() {
+      if (!quizActive) return;
+    
+      const userAnswer = document.getElementById('answer').value;
+      const currentWord = words[currentIndex];
+    
+      const response = await fetch('/check_word', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({answer: userAnswer, word: currentWord})
+      });
+    
+      const result = await response.json();
+      const resultClass = result.correct ? 'correct' : 'incorrect';
+      document.getElementById('results').innerHTML += `
+        <p class="${resultClass}">${result.polish} - Twoja odpowiedź: ${result.your_answer} - ${
+        result.correct ? '✔️ Poprawnie' : `❌ Niepoprawnie, poprawna odpowiedź: ${result.correct_answer}`
+      }</p>`;
+    
+      currentIndex++;
+      if (currentIndex < words.length) {
+        showNextWord();
+      } else {
+        endQuiz();
+      }
+    }
+
+    function showNextWord() {
+      if (!quizActive) return;
+    
+      document.getElementById('quiz').innerHTML = `
+        <p>${words[currentIndex].polish}</p>
+        <input type="text" id="answer" placeholder="Tłumaczenie...">
+        <button onclick="checkAnswer()">Sprawdź</button>
+      `;
+    }
+  </script>
 </head>
 <body>
   <div class="quiz-container">
@@ -14,9 +94,7 @@
     <button id="end-btn" class="quiz-button" style="display: none;" onclick="endQuiz()">Zakończ Quiz</button>
     <div id="quiz" class="quiz-content"></div>
     <div id="results" class="results-container"></div>
-    <!-- Dodany przycisk Powrót -->
     <a href="{{ url_for('home') }}" class="back-button">Powrót</a>
   </div>
-  <script src="/static/js/script.js"></script>
 </body>
 </html>
