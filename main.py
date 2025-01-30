@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta
 import random
 import os
+import time
 import joblib
 from dotenv import load_dotenv
 
@@ -42,9 +43,14 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        second_password = request.form['second_password']
         
         if users_collection.find_one({'username': username}):
             flash('Nazwa użytkownika jest już zajęta.')
+            return redirect(url_for('register'))
+        
+        if password != second_password:
+            flash('Hasła nie są takie same!')
             return redirect(url_for('register'))
 
         hashed_password = generate_password_hash(password)
@@ -177,6 +183,6 @@ def detect_language():
 @app.route('/detect-language')
 def detect_language_page():
     return render_template('detect_language.html')
-    
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
