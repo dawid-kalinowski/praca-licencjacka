@@ -137,15 +137,12 @@ def save_word():
     data = request.get_json()
     word_id = data.get('word_id')
 
-    print("Otrzymany word_id:", word_id)  # Sprawdź, co przychodzi
-
     if not word_id:
         return jsonify({'error': 'Brak słowa do zapisania'}), 400
 
     try:
-        word_object_id = ObjectId(word_id)  # Konwersja na ObjectId
+        word_object_id = ObjectId(word_id) 
     except Exception as e:
-        print("Błąd konwersji na ObjectId:", e)  # Sprawdź, co powoduje błąd
         return jsonify({'error': 'Nieprawidłowy identyfikator'}), 400
 
     word = words_collection.find_one({'_id': word_object_id})
@@ -174,6 +171,32 @@ def saved_words_page():
         words = list(words_collection.find({'_id': {'$in': word_ids}}, {'_id': 1, 'polish': 1, 'english': 1}))
     
     return render_template('saved_words.html', words=words)
+
+@app.route('/delete_word', methods=['POST'])
+def delete_word():
+    if 'user' not in session:
+        return jsonify({'error': 'Musisz być zalogowany'}), 401
+
+    data = request.get_json()
+    word_id = data.get('word_id')
+
+    if not word_id:
+        return jsonify({'error': 'Brak słowa do usunięcia'}), 400
+
+    try:
+        word_object_id = ObjectId(word_id)
+    except Exception:
+        return jsonify({'error': 'Nieprawidłowy identyfikator'}), 400
+
+    result = saved_words_collection.update_one(
+        {'username': session['user']},
+        {'$pull': {'words': word_object_id}}
+    )
+
+    if result.modified_count == 0:
+        return jsonify({'error': 'Nie znaleziono słowa do usunięcia'}), 400
+
+    return jsonify({'message': 'Słowo usunięte'})
 
 @app.route('/saved_words_quiz', methods=['GET'])
 def saved_words_quiz():

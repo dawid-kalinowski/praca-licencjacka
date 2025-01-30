@@ -4,12 +4,31 @@
     <meta charset="UTF-8">
     <title>Zapisane Słowa</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <script>
+        async function deleteWord(wordId) {
+            const response = await fetch('/delete_word', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ word_id: wordId })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                location.reload(); 
+            } else {
+                alert(result.error);
+            }
+        }
+    </script>
 </head>
 <body>
     <h1>Zapisane Słowa</h1>
     <ul>
         {% for word in words %}
-            <li>{{ word.polish }} - {{ word.english }}</li>
+            <li>
+                {{ word.polish }} - {{ word.english }}
+                <button onclick="deleteWord('{{ word._id }}')">Usuń</button>
+            </li>
         {% else %}
             <li>Brak zapisanych słów.</li>
         {% endfor %}
