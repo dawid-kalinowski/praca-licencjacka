@@ -20,8 +20,8 @@ DB_CONFIG = {
 }
 
 # Ładowanie modelu i wektoryzatora dla rozpoznawania języka
-MODEL_PATH = "model/language_model1.pkl"
-VECTORIZER_PATH = "model/tfidf_vectorizer1.pkl"
+MODEL_PATH = "model/language_model.pkl"
+VECTORIZER_PATH = "model/vectorizer.pkl"
 
 model = joblib.load(MODEL_PATH)
 vectorizer = joblib.load(VECTORIZER_PATH)
