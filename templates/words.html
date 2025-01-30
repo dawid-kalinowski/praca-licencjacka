@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista Słów</title>
+    <script>
+        async function saveWord(word) {
+            await fetch('/save_word', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ word: word })
+            });
+            alert('Słowo zapisane!');
+        }
+    </script>
+</head>
+<body>
+    <h1>Lista Słów</h1>
+    <ul>
+        {% for word in words %}
+        <li>
+            {{ word.polish }} - {{ word.english }} 
+            <button onclick="saveWord('{{ word.english }}')">Zapisz</button>
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('home') }}">Powrót</a>
+</body>
+</html>

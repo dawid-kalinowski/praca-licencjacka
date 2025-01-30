@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wybór Aplikacji</title>
+    <meta charset="UTF-8">
+    <title>Strona Główna</title>
 </head>
 <body>
-  <h1>Witaj! Wybierz opcję:</h1>
-  <a href="/quiz"><button>Przejdź do Quizu Słów</button></a>
-  <a href="/detect-language"><button>Przejdź do Rozpoznawania Języka</button></a>
+    <h1>Witaj!</h1>
+    <a href="{{ url_for('login') }}">Zaloguj</a> | 
+    <a href="{{ url_for('register') }}">Zarejestruj</a>
+    <a href="{{ url_for('detect_language') }}">Wykryj język</a>
 </body>
 </html>
