@@ -12,6 +12,37 @@ body {
     text-align: center;
   }
   
+
+    /* quiz.css */
+/* ... (pozostałe style pozostają bez zmian) */
+
+.back-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: linear-gradient(to right, #ff7e5f, #feb47b);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.back-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.back-button:active {
+    transform: scale(1);
+}
+
+
+
   .quiz-container {
     background: rgba(255, 255, 255, 0.1);
     padding: 40px;
@@ -153,4 +184,9 @@ body {
     .results-container p {
       font-size: 1rem;
     }
+    .back-button {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
   }
+

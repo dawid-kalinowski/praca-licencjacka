@@ -1,7 +1,6 @@
 Ważne:
 - możliwość wyboru języków w fiszkach
-- w "zapisz" też niech jest opcja usunięcia z zapisanych
-- przyciski "wróć" w logowaniu i rejestrowaniu, oraz w quizie
+- przyciski "wróć" w logowaniu i rejestrowaniu
 
 Zrobić, jeżeli starczy czasu:
 - przy logowaniu z nieprawidłowymi danymi komunikaty wyświetla dopiero przy kliknięciu 'register', a nie od razu na stronie z logowaniem

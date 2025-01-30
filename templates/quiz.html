@@ -1,10 +1,11 @@
+<!-- quiz.html -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz Słów</title>
-  <link rel="stylesheet" href="/static/css/quiz.css"> <!-- Nowy plik CSS dla quizu -->
+  <link rel="stylesheet" href="/static/css/quiz.css">
 </head>
 <body>
   <div class="quiz-container">
@@ -13,6 +14,8 @@
     <button id="end-btn" class="quiz-button" style="display: none;" onclick="endQuiz()">Zakończ Quiz</button>
     <div id="quiz" class="quiz-content"></div>
     <div id="results" class="results-container"></div>
+    <!-- Dodany przycisk Powrót -->
+    <a href="{{ url_for('home') }}" class="back-button">Powrót</a>
   </div>
   <script src="/static/js/script.js"></script>
 </body>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Zapisane Słowa</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/saved_words.css">
     <script>
         async function deleteWord(wordId) {
             const response = await fetch('/delete_word', {
@@ -22,17 +22,19 @@
     </script>
 </head>
 <body>
-    <h1>Zapisane Słowa</h1>
-    <ul>
-        {% for word in words %}
-            <li>
-                {{ word.polish }} - {{ word.english }}
-                <button onclick="deleteWord('{{ word._id }}')">Usuń</button>
-            </li>
-        {% else %}
-            <li>Brak zapisanych słów.</li>
-        {% endfor %}
-    </ul>
-    <a href="{{ url_for('home') }}">Powrót</a>
+    <div class="saved-words-container">
+        <h1>Zapisane Słowa</h1>
+        <ul class="words-list">
+            {% for word in words %}
+                <li>
+                    <span>{{ word.polish }} - {{ word.english }}</span>
+                    <button onclick="deleteWord('{{ word._id }}')">Usuń</button>
+                </li>
+            {% else %}
+                <li class="empty-message">Brak zapisanych słów</li>
+            {% endfor %}
+        </ul>
+        <a href="{{ url_for('home') }}" class="back-button">Powrót</a>
+    </div>
 </body>
 </html>
