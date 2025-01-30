@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Lista Słów</title>
+    <link rel="stylesheet" href="/static/css/words_list.css"> <!-- Nowy plik CSS -->
     <script>
     async function saveWord(wordId) {
         const response = await fetch('/save_word', {
@@ -15,17 +16,19 @@
     }
     </script>
 </head>
-<link rel="stylesheet" href="/static/css/style.css">
 <body>
-    <h1>Lista Słów</h1>
-    <ul>
-        {% for word in words %}
-            <li>
-                {{ word.polish }} - {{ word.english }} 
-                <button onclick="saveWord('{{ word._id }}')">Zapisz</button>
+    <div class="words-container">
+        <h1>Lista Słów</h1>
+        <ul class="words-list">
+            {% for word in words %}
+            <li class="word-item">
+                <span class="polish-word">{{ word.polish }}</span> - 
+                <span class="english-word">{{ word.english }}</span>
+                <button class="save-button" onclick="saveWord('{{ word.english }}')">Zapisz</button>
             </li>
-        {% endfor %}
-    </ul>
-    <a href="{{ url_for('home') }}">Powrót</a>
+            {% endfor %}
+        </ul>
+        <a href="{{ url_for('home') }}" class="back-button">Powrót</a>
+    </div>
 </body>
 </html>

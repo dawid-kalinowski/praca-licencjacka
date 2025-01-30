@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Strona Główna</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/index.css">
 </head>
 <body>
     <h1>Witaj!</h1>
-    <a href="{{ url_for('login') }}">Zaloguj</a> | 
-    <a href="{{ url_for('register') }}">Zarejestruj</a>
-    <a href="{{ url_for('detect_language') }}">Wykryj język</a>
+    <div class="button-container">
+        <a href="{{ url_for('login') }}"><button class="custom-button">Zaloguj</button></a>
+        <a href="{{ url_for('register') }}"><button class="custom-button">Zarejestruj</button></a>
+        <a href="{{ url_for('detect_language') }}"><button class="custom-button">Wykryj język</button></a>
+    </div>
 </body>
 </html>
