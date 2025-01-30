@@ -24,8 +24,8 @@ words_collection = mongo.db.words
 history_collection = mongo.db.history
 saved_words_collection = mongo.db.saved_words
 
-MODEL_PATH = "model/language_model1.pkl"
-VECTORIZER_PATH = "model/tfidf_vectorizer1.pkl"
+MODEL_PATH = "model/language_model.pkl"
+VECTORIZER_PATH = "model/vectorizer.pkl"
 
 model = joblib.load(MODEL_PATH)
 vectorizer = joblib.load(VECTORIZER_PATH)

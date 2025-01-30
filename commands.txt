@@ -1,3 +1,24 @@
 docker run -d --name mysql-base -e MYSQL_ROOT_PASSWORD=123 -p 3306:3306 mysql:latest --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci       // zainstalowanie mysql w dockerze
 mysql -u root -p        // logowanie do bazy z poziomu dockera
 
+
+
+mongo:
+
+uruchomć mongodb
+
+docker run -d --name mongodb -p 27017:27017 mongo:latest
+
+
+dodać słowa
+db.words.insertMany([
+    { polish: "dom", english: "house" },
+    { polish: "pies", english: "dog" },
+    { polish: "kot", english: "cat" },
+    { polish: "drzewo", english: "tree" },
+    { polish: "człowiek", english: "human" }
+])
+
+plik .env
+MONGO_URI=mongodb://localhost:27017/
+DB_NAME=word_db

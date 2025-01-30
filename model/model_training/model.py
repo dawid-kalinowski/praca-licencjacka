@@ -1,54 +1,66 @@
-import numpy as np
+import os
 import pandas as pd
+import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
-import os
+import joblib
 
-# 1. Funkcja do wczytywania danych z pliku CSV i przypisania etykiety na podstawie nazwy pliku
-def wczytaj_dane_z_csv(plik_csv, jezyk):
+
+# Folder, w którym znajdują się pliki CSV z danymi językowymi
+DATA_FOLDER = "data"
+
+def wczytaj_dane_z_csv(plik_csv):
+    """Wczytuje dane z pliku CSV i przypisuje język na podstawie nazwy pliku."""
+    jezyk = os.path.splitext(os.path.basename(plik_csv))[0]  # Pobranie nazwy pliku bez rozszerzenia
     df = pd.read_csv(plik_csv)
-    df['język'] = jezyk  # Przypisujemy etykietę języka na podstawie nazwy pliku
+    df['język'] = jezyk
     return df
 
-# 2. Wczytanie danych z plików CSV dla każdego języka
-# Wczytujemy dane i przypisujemy etykiety na podstawie nazw plików
-df_pol = wczytaj_dane_z_csv("data/polski.csv", "polski")
-df_eng = wczytaj_dane_z_csv("data/angielski.csv", "angielski")
-df_deu = wczytaj_dane_z_csv("data/niemiecki.csv", "niemiecki")
+# Pobranie listy wszystkich plików CSV w katalogu
+pliki_csv = [os.path.join(DATA_FOLDER, f) for f in os.listdir(DATA_FOLDER) if f.endswith(".csv")]
 
-# Łączenie danych z wszystkich plików w jeden DataFrame
-df = pd.concat([df_pol, df_eng, df_deu], ignore_index=True)
+# Wczytanie danych z wszystkich plików CSV
+df_list = [wczytaj_dane_z_csv(plik) for plik in pliki_csv]
 
-# Zmienna 'texts' zawiera teksty, a 'labels' języki
+# Połączenie wszystkich danych w jeden DataFrame
+df = pd.concat(df_list, ignore_index=True)
+
+# Przygotowanie danych do modelu
 texts = df['tekst'].values
 labels = df['język'].values
 
-# 3. Przetwarzanie danych
 vectorizer = TfidfVectorizer()
 X = vectorizer.fit_transform(texts)
 y = np.array(labels)
 
-# 4. Podział na zbiór treningowy i testowy
+# Podział na zbiór treningowy i testowy
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-# 5. Tworzenie i trenowanie modelu
+# Trenowanie modelu
 model = LogisticRegression(max_iter=1000)
 model.fit(X_train, y_train)
 
-# 6. Ewaluacja modelu
+# Ocena modelu
 y_pred = model.predict(X_test)
 print(classification_report(y_test, y_pred))
 
-# 7. Funkcja do przewidywania
 def przewiduj_jezyk(tekst):
+    """Przewiduje język podanego tekstu i zwraca prawdopodobieństwa dla każdej klasy."""
     tekst_wektor = vectorizer.transform([tekst])
     przewidywanie = model.predict_proba(tekst_wektor)
     klasy = model.classes_
     return {klasa: round(prob, 3) for klasa, prob in zip(klasy, przewidywanie[0])}
 
-# Przykład użycia
+# Zapisz model do pliku
+joblib.dump(model, 'language_model.pkl')
+
+# Zapisz wektoryzator do pliku
+joblib.dump(vectorizer, 'vectorizer.pkl')
+
+
+
 # print(przewiduj_jezyk("Gestern habe ich einen langen Spaziergang im Wald gemacht und dabei viele interessante Vögel gesehen."))  # Niemiecki
 # print(przewiduj_jezyk("Po całym dniu pracy uwielbiam usiąść na kanapie i oglądać ulubione filmy."))  # Polski
 # print(przewiduj_jezyk("I have been studying programming for several months now, and I am really enjoying it, especially learning new languages."))  # Angielski
