@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz Słów</title>
-  <link rel="stylesheet" href="/static/css/style.css">
-  <script src="/static/js/script.js"></script>
+  <link rel="stylesheet" href="/static/css/quiz.css"> <!-- Nowy plik CSS dla quizu -->
 </head>
 <body>
-  <h1>Quiz Słów</h1>
-  <button onclick="startQuiz()">Start</button>
-  <button id="end-btn" style="display: none;" onclick="endQuiz()">Zakończ Quiz</button>
-  <div id="quiz"></div>
-  <div id="results"></div>
+  <div class="quiz-container">
+    <h1>Quiz Słów</h1>
+    <button class="quiz-button" onclick="startQuiz()">Start</button>
+    <button id="end-btn" class="quiz-button" style="display: none;" onclick="endQuiz()">Zakończ Quiz</button>
+    <div id="quiz" class="quiz-content"></div>
+    <div id="results" class="results-container"></div>
+  </div>
+  <script src="/static/js/script.js"></script>
 </body>
 </html>

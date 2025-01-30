@@ -3,29 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Rejestracja</title>
+    <link rel="stylesheet" href="/static/css/register.css"> <!-- Nowy plik CSS dla rejestracji -->
 </head>
 <body>
-    <h1>Rejestracja</h1>
+    <div class="register-container">
+        <h1>Rejestracja</h1>
 
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <ul>
-        {% for message in messages %}
-          <li>{{ message }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
 
-  
-    <form method="POST">
-        <input type="text" name="username" placeholder="Nazwa użytkownika" required><br>
-        <input type="password" name="password" placeholder="Hasło" required><br>
-        <input type="password" name="second_password" placeholder="Powtórz hasło" required><br>
-        
-        <button type="submit">Zarejestruj</button>
-    </form>
-    <a href="{{ url_for('login') }}">Masz już konto? Zaloguj się</a>
-    <link rel="stylesheet" href="/static/css/style.css">
+        <form method="POST" class="register-form">
+            <input type="text" name="username" placeholder="Nazwa użytkownika" required><br>
+            <input type="password" name="password" placeholder="Hasło" required><br>
+            <input type="password" name="second_password" placeholder="Powtórz hasło" required><br>
+            
+            <button type="submit" class="register-button">Zarejestruj</button>
+        </form>
+        <p class="login-link">Masz już konto? <a href="{{ url_for('login') }}">Zaloguj się</a></p>
+    </div>
 </body>
 </html>

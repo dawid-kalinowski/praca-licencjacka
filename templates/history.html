@@ -3,18 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Historia Quizów</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/quiz_history.css"> <!-- Nowy plik CSS dla historii quizów -->
 </head>
 <body>
-    <h1>Twoja Historia Quizów</h1>
-    <ul>
-        {% for entry in history %}
-        <li>
-            {{ entry.word }} - Twoja odpowiedź: {{ entry.your_answer }} - 
-            {% if entry.correct %} ✅ {% else %} ❌ {% endif %}
-        </li>
-        {% endfor %}
-    </ul>
-    <a href="{{ url_for('home') }}">Powrót</a>
+    <div class="history-container">
+        <h1>Twoja Historia Quizów</h1>
+        <ul class="history-list">
+            {% for entry in history %}
+            <li class="history-item">
+                <span class="word">{{ entry.word }}</span> - 
+                <span class="answer">Twoja odpowiedź: {{ entry.your_answer }}</span> - 
+                <span class="result">
+                    {% if entry.correct %} ✅ Poprawnie {% else %} ❌ Błędnie {% endif %}
+                </span>
+            </li>
+            {% endfor %}
+        </ul>
+        <a href="{{ url_for('home') }}" class="back-button">Powrót</a>
+    </div>
 </body>
 </html>

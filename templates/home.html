@@ -3,14 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Panel użytkownika</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/user_panel.css"> <!-- Nowy plik CSS dla panelu użytkownika -->
 </head>
 <body>
-    <h1>Witaj, {{ username }}!</h1>
-    <a href="{{ url_for('quiz_page') }}">Rozpocznij quiz</a> |
-    <a href="{{ url_for('quiz_history') }}">Historia quizów</a> |
-    <a href="{{ url_for('words_page') }}">Lista słów</a> |
-    <a href="{{ url_for('saved_words_page') }}">Zapisane słowa</a> |
-    <a href="{{ url_for('logout') }}">Wyloguj</a>
+    <div class="user-panel-container">
+        <h1>Witaj, {{ username }}!</h1>
+        <div class="button-container">
+            <a href="{{ url_for('quiz_page') }}" class="panel-button">Rozpocznij quiz</a>
+            <a href="{{ url_for('quiz_history') }}" class="panel-button">Historia quizów</a>
+            <a href="{{ url_for('words_page') }}" class="panel-button">Lista słów</a>
+            <a href="{{ url_for('saved_words_page') }}" class="panel-button">Zapisane słowa</a>
+            <a href="{{ url_for('logout') }}" class="panel-button logout-button">Wyloguj</a>
+        </div>
+    </div>
 </body>
 </html>

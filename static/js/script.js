@@ -14,7 +14,7 @@ async function startQuiz() {
 
 function endQuiz() {
   quizActive = false;
-  document.getElementById('quiz').innerHTML = '<p>Quiz zakończony przedwcześnie!</p>';
+  document.getElementById('quiz').innerHTML = '<p>Quiz zakończony!</p>';
   document.getElementById('end-btn').style.display = 'none';
 }
 
@@ -31,8 +31,9 @@ async function checkAnswer() {
   });
 
   const result = await response.json();
+  const resultClass = result.correct ? 'correct' : 'incorrect';
   document.getElementById('results').innerHTML += `
-    <p>${result.polish} - Twoja odpowiedź: ${result.your_answer} - ${
+    <p class="${resultClass}">${result.polish} - Twoja odpowiedź: ${result.your_answer} - ${
     result.correct ? '✔️ Poprawnie' : `❌ Niepoprawnie, poprawna odpowiedź: ${result.correct_answer}`
   }</p>`;
 
