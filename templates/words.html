@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <title>Lista Słów</title>
     <script>
-        async function saveWord(word) {
-            await fetch('/save_word', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ word: word })
-            });
-            alert('Słowo zapisane!');
-        }
+    async function saveWord(wordId) {
+        const response = await fetch('/save_word', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ word_id: wordId })
+        });
+        const data = await response.json();
+        alert(data.message || data.error);
+    }
     </script>
 </head>
 <link rel="stylesheet" href="/static/css/style.css">
@@ -19,10 +20,10 @@
     <h1>Lista Słów</h1>
     <ul>
         {% for word in words %}
-        <li>
-            {{ word.polish }} - {{ word.english }} 
-            <button onclick="saveWord('{{ word.english }}')">Zapisz</button>
-        </li>
+            <li>
+                {{ word.polish }} - {{ word.english }} 
+                <button onclick="saveWord('{{ word._id }}')">Zapisz</button>
+            </li>
         {% endfor %}
     </ul>
     <a href="{{ url_for('home') }}">Powrót</a>

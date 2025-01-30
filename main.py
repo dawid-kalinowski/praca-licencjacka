@@ -8,6 +8,7 @@ import random
 import os
 import joblib
 from dotenv import load_dotenv
+from bson import ObjectId
 
 load_dotenv()
 
@@ -125,31 +126,53 @@ def quiz_history():
 
 @app.route('/words', methods=['GET'])
 def words_page():
-    all_words = list(words_collection.find({}, {'_id': 0}))
+    all_words = list(words_collection.find({}, {'_id': 1, 'polish': 1, 'english': 1}))
     return render_template('words.html', words=all_words)
 
 @app.route('/save_word', methods=['POST'])
 def save_word():
     if 'user' not in session:
         return jsonify({'error': 'Musisz być zalogowany'}), 401
-    
-    word = request.json.get('word')
-    if not word:
+
+    data = request.get_json()
+    word_id = data.get('word_id')
+
+    print("Otrzymany word_id:", word_id)  # Sprawdź, co przychodzi
+
+    if not word_id:
         return jsonify({'error': 'Brak słowa do zapisania'}), 400
-    
+
+    try:
+        word_object_id = ObjectId(word_id)  # Konwersja na ObjectId
+    except Exception as e:
+        print("Błąd konwersji na ObjectId:", e)  # Sprawdź, co powoduje błąd
+        return jsonify({'error': 'Nieprawidłowy identyfikator'}), 400
+
+    word = words_collection.find_one({'_id': word_object_id})
+    if not word:
+        return jsonify({'error': 'Słowo nie istnieje'}), 400
+
     saved_words_collection.update_one(
         {'username': session['user']},
-        {'$addToSet': {'words': word}},
+        {'$addToSet': {'words': word_object_id}}, 
         upsert=True
     )
+
     return jsonify({'message': 'Słowo zapisane'})
 
 @app.route('/saved_words', methods=['GET'])
 def saved_words_page():
     if 'user' not in session:
         return redirect(url_for('login'))
+    
+    # Znajdź zapisane słowa użytkownika
     saved_words = saved_words_collection.find_one({'username': session['user']}, {'_id': 0, 'words': 1})
-    words = saved_words.get('words', []) if saved_words else []
+    
+    words = []
+    if saved_words and 'words' in saved_words:
+        word_ids = saved_words['words']
+        words = list(words_collection.find({'_id': {'$in': word_ids}}, {'_id': 1, 'polish': 1, 'english': 1}))
+    
     return render_template('saved_words.html', words=words)
 
 @app.route('/saved_words_quiz', methods=['GET'])
