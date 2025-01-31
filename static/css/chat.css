@@ -5,7 +5,7 @@
 }
 
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Roboto', sans-serif;
     background: linear-gradient(to right, #6a5acd, #9d87ff);
     color: #fff;
     margin: 0;
@@ -16,6 +16,20 @@ body {
     min-height: 100vh;
     flex-direction: column;
     text-align: center;
+    overflow: hidden;
+}
+
+#chat-container {
+    width: 100%;
+    max-width: 900px;
+    height: 95vh;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
 }
 
 h1 {
@@ -26,31 +40,57 @@ h1 {
 }
 
 #chat-box {
-    width: 100%;
-    max-width: 600px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 20px;
+    flex: 1;
     overflow-y: auto;
-    height: 300px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(5px);
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-#chat-box p {
-    font-size: 1rem;
-    margin-bottom: 10px;
+.message {
+    max-width: 70%;
+    padding: 12px 18px;
+    border-radius: 15px;
+    position: relative;
+    word-wrap: break-word;
+}
+
+.system-message {
+    align-self: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.my-message {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #ff7e5f, #feb47b);
+    color: #fff;
+}
+
+.other-message {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+#input-container {
+    display: flex;
+    gap: 10px;
+    padding: 15px 0 0 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 #message-input {
-    width: 100%;
-    max-width: 500px;
-    padding: 10px;
+    flex: 1;
+    padding: 12px;
     font-size: 1rem;
     border-radius: 10px;
     border: none;
-    margin-bottom: 10px;
     background: rgba(255, 255, 255, 0.8);
     color: #333;
     outline: none;
@@ -66,8 +106,8 @@ button {
     color: #fff;
     border: none;
     border-radius: 10px;
-    font-size: 1.2rem;
-    padding: 10px 20px;
+    font-size: 1rem;
+    padding: 12px 25px;
     cursor: pointer;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s, box-shadow 0.2s;
@@ -78,46 +118,48 @@ button:hover {
     box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
 }
 
-button:active {
-    transform: scale(1);
-}
-
-a {
-    text-decoration: none;
-    font-size: 1.2rem;
-    color: #ffffff;
-    font-weight: bold;
-    padding: 10px 20px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    margin-top: 20px;
+.back-button {
     display: inline-block;
-    transition: background 0.2s, transform 0.2s;
+    padding: 10px 20px;
+    background: linear-gradient(to right, #6a5acd, #9d87ff);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-a:hover {
-    background: rgba(255, 255, 255, 0.4);
-    transform: scale(1.1);
+.back-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.back-button:active {
+    transform: scale(1);
 }
 
 
 @media (max-width: 768px) {
-    body {
-        padding: 20px;
+    #chat-container {
+        height: 100vh;
+        border-radius: 0;
+        padding: 15px;
     }
 
-    #chat-box {
-        max-width: 100%;
+    .message {
+        max-width: 85%;
     }
 
-    #message-input {
-        max-width: 100%;
-        padding: 8px;
-        font-size: 0.9rem;
+    #input-container {
+        flex-direction: column;
     }
 
     button {
-        padding: 8px 16px;
-        font-size: 1rem;
+        width: 100%;
+        padding: 10px;
     }
 }
