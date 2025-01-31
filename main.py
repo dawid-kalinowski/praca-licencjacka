@@ -23,6 +23,7 @@ users_collection = mongo.db.users
 words_collection = mongo.db.words
 history_collection = mongo.db.history
 saved_words_collection = mongo.db.saved_words
+flashcard_sets_collection = mongo.db.flashcard_sets
 
 MODEL_PATH = "model/language_model.pkl"
 VECTORIZER_PATH = "model/vectorizer.pkl"
@@ -210,6 +211,128 @@ def delete_word():
         return jsonify({'error': 'Nie znaleziono słowa do usunięcia'}), 400
 
     return jsonify({'message': 'Słowo usunięte'})
+
+
+# Strona główna dla fiszek
+@app.route('/flashcards')
+def flashcards_home():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    
+    user_sets = list(flashcard_sets_collection.find({'username': session['user']}))
+    return render_template('flashcards.html', sets=user_sets)
+
+# Tworzenie nowego zestawu fiszek
+@app.route('/create_set', methods=['GET', 'POST'])
+def create_set():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        set_name = request.form.get('set_name')
+        
+        if not set_name:
+            flash('Nazwa zestawu jest wymagana')
+            return redirect(url_for('create_set'))
+        
+        flashcard_sets_collection.insert_one({'username': session['user'], 'set_name': set_name, 'words': []})
+        flash('Zestaw utworzony')
+        return redirect(url_for('flashcards_home'))
+    
+    return render_template('create_set.html')
+
+# Dodawanie słowa do zestawu
+@app.route('/add_word_to_set', methods=['POST'])
+def add_word_to_set():
+    if 'user' not in session:
+        return jsonify({'error': 'Musisz być zalogowany'}), 401
+    
+    set_id = request.form.get('set_id')
+    polish = request.form.get('polish')
+    english = request.form.get('english')
+    
+    if not set_id or not polish or not english:
+        flash('Wszystkie pola są wymagane')
+        return redirect(url_for('get_set_words', set_id=set_id))
+    
+    try:
+        set_object_id = ObjectId(set_id)
+    except:
+        flash('Nieprawidłowy identyfikator zestawu')
+        return redirect(url_for('get_set_words', set_id=set_id))
+    
+    flashcard_sets_collection.update_one(
+        {'_id': set_object_id},
+        {'$push': {'words': {'polish': polish, 'english': english}}}
+    )
+    flash('Słowo dodane')
+    return redirect(url_for('get_set_words', set_id=set_id))
+
+# Pobieranie słów z konkretnego zestawu
+@app.route('/get_set_words/<set_id>', methods=['GET'])
+def get_set_words(set_id):
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    
+    try:
+        set_object_id = ObjectId(set_id)
+    except:
+        flash('Nieprawidłowy identyfikator zestawu')
+        return redirect(url_for('flashcards_home'))
+    
+    flashcard_set = flashcard_sets_collection.find_one({'_id': set_object_id})
+    if not flashcard_set:
+        flash('Zestaw nie istnieje')
+        return redirect(url_for('flashcards_home'))
+    
+    return render_template('flashcard_set.html', set_id=set_id, set_name=flashcard_set['set_name'], words=flashcard_set['words'])
+
+# Usuwanie zestawu fiszek
+@app.route('/delete_set', methods=['POST'])
+def delete_set():
+    if 'user' not in session:
+        return jsonify({'error': 'Musisz być zalogowany'}), 401
+    
+    set_id = request.form.get('set_id')
+    
+    try:
+        set_object_id = ObjectId(set_id)
+    except:
+        flash('Nieprawidłowy identyfikator zestawu')
+        return redirect(url_for('flashcards_home'))
+    
+    flashcard_sets_collection.delete_one({'_id': set_object_id})
+    flash('Zestaw usunięty')
+    return redirect(url_for('flashcards_home'))
+
+# Usuwanie słowa z zestawu
+@app.route('/delete_word_from_set', methods=['POST'])
+def delete_word_from_set():
+    if 'user' not in session:
+        return jsonify({'error': 'Musisz być zalogowany'}), 401
+    
+    set_id = request.form.get('set_id')
+    polish = request.form.get('polish')
+    english = request.form.get('english')
+    
+    if not set_id or not polish or not english:
+        flash('Wszystkie pola są wymagane')
+        return redirect(url_for('get_set_words', set_id=set_id))
+    
+    try:
+        set_object_id = ObjectId(set_id)
+    except:
+        flash('Nieprawidłowy identyfikator zestawu')
+        return redirect(url_for('get_set_words', set_id=set_id))
+    
+    flashcard_sets_collection.update_one(
+        {'_id': set_object_id},
+        {'$pull': {'words': {'polish': polish, 'english': english}}}
+    )
+    flash('Słowo usunięte')
+    return redirect(url_for('get_set_words', set_id=set_id))
+
+
 
 @app.route('/detect-language', methods=['POST'])
 def detect_language():

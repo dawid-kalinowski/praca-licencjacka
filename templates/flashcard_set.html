@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zestaw: {{ set_name }}</title>
+</head>
+<body>
+    <h1>Zestaw: {{ set_name }}</h1>
+    <form method="POST" action="{{ url_for('add_word_to_set') }}">
+        <input type="hidden" name="set_id" value="{{ set_id }}">
+        <label for="polish">Słowo:</label>
+        <input type="text" name="polish" required>
+        <label for="english">Tłumaczenie:</label>
+        <input type="text" name="english" required>
+        <button type="submit">Dodaj</button>
+    </form>
+    <ul>
+        {% for word in words %}
+            <li>
+                {{ word.polish }} - {{ word.english }}
+                <form method="POST" action="{{ url_for('delete_word_from_set') }}" style="display:inline;">
+                    <input type="hidden" name="set_id" value="{{ set_id }}">
+                    <input type="hidden" name="polish" value="{{ word.polish }}">
+                    <input type="hidden" name="english" value="{{ word.english }}">
+                    <button type="submit">Usuń</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('flashcards_home') }}">Powrót</a>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stwórz Zestaw Fiszek</title>
+</head>
+<body>
+    <h1>Stwórz Nowy Zestaw Fiszek</h1>
+    <form method="POST">
+        <label for="set_name">Nazwa Zestawu:</label>
+        <input type="text" name="set_name" required>
+        <button type="submit">Utwórz</button>
+    </form>
+    <a href="{{ url_for('flashcards_home') }}">Powrót</a>
+</body>
+</html>
