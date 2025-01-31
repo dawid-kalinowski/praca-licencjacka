@@ -1,19 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rozpoznawanie Języka</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-  <h1>Rozpoznawanie Języka</h1>
+  <div class="detect-container">
+    <div class="header">
+      <h1><i class="fas fa-language"></i> Rozpoznawanie Języka</h1>
+      <p class="subtitle">Wprowadź tekst w dowolnym języku</p>
+    </div>
+
+    <div class="supported-languages">
+      <h2><i class="fas fa-globe-europe"></i> Obsługiwane języki:</h2>
+      <div class="language-tags">
+        <span class="lang-tag color-1">Angielski</span>
+        <span class="lang-tag color-2">Czeski</span>
+        <span class="lang-tag color-3">Francuski</span>
+        <span class="lang-tag color-4">Hiszpański</span>
+        <span class="lang-tag color-5">Niemiecki</span>
+        <span class="lang-tag color-6">Polski</span>
+        <span class="lang-tag color-7">Portugalski</span>
+        <span class="lang-tag color-8">Słowacki</span>
+        <span class="lang-tag color-9">Szwedzki</span>
+        <span class="lang-tag color-10">Turecki</span>
+        <span class="lang-tag color-11">Włoski</span>
+      </div>
+    </div>
+
+    <div class="input-container">
+      <textarea id="textInput" placeholder="Wprowadź zdanie..." class="glowing-input"></textarea>
+      <div class="input-decoration"></div>
+    </div>
+
+    <button class="detect-button" onclick="detectLanguage()">
+      <i class="fas fa-search"></i> Sprawdź
+    </button>
+
+    <div class="results">
+      <div class="result-card success" id="result">
+        <i class="fas fa-check-circle"></i>
+        <span class="result-text"></span>
+      </div>
+      <div class="result-card error" id="error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span class="error-text"></span>
+      </div>
+    </div>
+
+    <a href="{{ url_for('home') }}" class="back-button">
+      <i class="fas fa-arrow-left"></i> Powrót
+    </a>
+  </div>
   <script src="/static/js/script.js"></script>
-  <textarea id="textInput" placeholder="Wprowadź zdanie..."></textarea>
-  <br>
-  <button onclick="detectLanguage()">Sprawdź</button>
-  <h2 id="result"></h2>
-  <h2 id="error" style="color: red;"></h2>
-  <a href="{{ url_for('home') }}" class="back-button">Powrót</a>
 </body>
 </html>

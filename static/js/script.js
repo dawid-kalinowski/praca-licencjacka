@@ -87,3 +87,19 @@ async function detectLanguage() {
     errorElement.textContent = "Wystąpił błąd podczas połączenia z serwerem.";
   }
 }
+
+function showResult(element, message) {
+  const card = document.querySelector(element);
+  card.classList.add('show');
+  if(element === '#result') {
+      document.querySelector('.result-text').textContent = message;
+  } else {
+      document.querySelector('.error-text').textContent = message;
+  }
+}
+
+function resetResults() {
+  document.querySelectorAll('.result-card').forEach(card => {
+      card.classList.remove('show');
+  });
+}
