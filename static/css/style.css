@@ -97,7 +97,6 @@ h2 {
   transform: scale(1);
 }
 
-/* Responsywność */
 @media (max-width: 768px) {
   h1 {
     font-size: 2.5rem;
@@ -118,7 +117,6 @@ h2 {
 }
 }
 
-/* Dodaj te style do swojego pliku CSS */
 .detect-container {
   background: rgba(255, 255, 255, 0.1);
   padding: 40px;
@@ -206,7 +204,6 @@ h2 {
   color: #ff4c4c;
 }
 
-/* Responsywność */
 @media (max-width: 768px) {
   .detect-container {
     padding: 25px;

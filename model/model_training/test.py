@@ -1,6 +1,5 @@
 import joblib
 
-# Wczytaj zapisany model i wektoryzator
 model = joblib.load('../language_model.pkl')
 vectorizer = joblib.load('../vectorizer.pkl')
 
@@ -10,16 +9,13 @@ def przewiduj_jezyk(tekst):
     przewidywanie = model.predict_proba(tekst_wektor)
     klasy = model.classes_
 
-    # Stworzenie słownika z językami i ich prawdopodobieństwami
     prawdopodobienstwa = {klasa: prob for klasa, prob in zip(klasy, przewidywanie[0])}
 
-    # Posortowanie słownika w malejącej kolejności według wartości prawdopodobieństw
     posortowane_prawdopodobienstwa = sorted(prawdopodobienstwa.items(), key=lambda x: x[1], reverse=True)
 
-    # Zwrócenie trzech najbardziej prawdopodobnych języków
+
     return [(klasa, round(prob, 3)) for klasa, prob in posortowane_prawdopodobienstwa[:3]]
 
-# Testy dla zadanych zdań
 # testy = {
 #     "Angielski": "The sun sets over the mountains, casting a golden glow on the landscape.",
 #     "Czeski": "Včera večer jsem si užil skvělý koncert v centru města.",
@@ -103,7 +99,6 @@ testy = {
     ]
 }
 
-# Wywołanie funkcji dla wszystkich testów
 for jezyk, zdania in testy.items():
     for zdanie in zdania:
         wynik = przewiduj_jezyk(zdanie)

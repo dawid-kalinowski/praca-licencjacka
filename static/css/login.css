@@ -1,4 +1,3 @@
-/* login.css */
 body {
     font-family: 'Arial', sans-serif;
     background: linear-gradient(to right, #6a5acd, #9d87ff);
@@ -109,7 +108,6 @@ h1 {
 }
 
 
-/* Responsywność */
 @media (max-width: 768px) {
     .login-container {
         padding: 20px;

@@ -17,7 +17,6 @@ app.secret_key = 'secret'
 app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/word_db')
 app.permanent_session_lifetime = timedelta(minutes=30)
 
-# Inicjalizacja MongoDB
 mongo = PyMongo(app)
 users_collection = mongo.db.users
 words_collection = mongo.db.words
@@ -177,7 +176,6 @@ def get_saved_words():
     if 'user' not in session:
         return redirect(url_for('login'))
     
-    # Znajdź zapisane słowa użytkownika
     saved_words = saved_words_collection.find_one({'username': session['user']}, {'_id': 0, 'words': 1})
     
     words = []

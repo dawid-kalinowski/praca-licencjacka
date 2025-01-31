@@ -1,4 +1,3 @@
-/* quiz_history.css */
 body {
     font-family: 'Arial', sans-serif;
     background: linear-gradient(to right, #6a5acd, #9d87ff);
@@ -99,7 +98,6 @@ h1 {
     transform: scale(1);
 }
 
-/* Responsywność */
 @media (max-width: 768px) {
     .history-container {
         padding: 20px;

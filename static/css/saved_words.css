@@ -1,4 +1,3 @@
-/* saved_words.css */
 body {
     font-family: 'Arial', sans-serif;
     background: linear-gradient(to right, #6a5acd, #9d87ff);
@@ -130,7 +129,6 @@ h1 {
     transform: scale(0.98);
 }
 
-/* Responsywność */
 @media (max-width: 768px) {
     .saved-words-container {
         padding: 25px;
