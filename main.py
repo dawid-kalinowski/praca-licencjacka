@@ -285,7 +285,27 @@ def get_set_words(set_id):
     
     return render_template('flashcard_set.html', set_id=set_id, set_name=flashcard_set['set_name'], words=flashcard_set['words'])
 
-# Usuwanie zestawu fiszek
+
+@app.route('/get_set_words_for_quiz/<set_id>', methods=['GET'])
+def get_set_words_for_quiz(set_id):
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    
+    try:
+        set_object_id = ObjectId(set_id)
+    except:
+        flash('Nieprawidłowy identyfikator zestawu')
+        return redirect(url_for('flashcards_home'))
+    
+    flashcard_set = flashcard_sets_collection.find_one({'_id': set_object_id})
+    if not flashcard_set:
+        flash('Zestaw nie istnieje')
+        return redirect(url_for('flashcards_home'))
+    flashcard_set.pop('_id', None)
+
+    return jsonify(flashcard_set)
+
+
 @app.route('/delete_set', methods=['POST'])
 def delete_set():
     if 'user' not in session:

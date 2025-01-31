@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/css/set.css">
     <title>Zestaw: {{ set_name }}</title>
+
+    <script>
+        async function startSavedWordsQuiz(set_id) {
+            const response = await fetch(`/get_set_words_for_quiz/${set_id}`);
+            const data = await response.json();
+            
+            if (!data || !data.words || data.words.length === 0) {
+                alert("Brak słów do quizu.");
+                return;
+            }
+    
+            sessionStorage.setItem('quizWords', JSON.stringify(data.words));
+            window.location.href = "/quiz?saved=true";
+        }
+    </script>
 </head>
 <body>
     <h1>Zestaw: {{ set_name }}</h1>
@@ -29,6 +44,7 @@
             </li>
         {% endfor %}
     </ul>
+    <a href="#" onclick="startSavedWordsQuiz('{{ set_id }}')" class="quiz-button">Quiz z tego zestawu</a>
     <a href="{{ url_for('flashcards_home') }}">Powrót</a>
 </body>
 </html>
