@@ -13,6 +13,8 @@ from bson import ObjectId
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
+
 app.secret_key = 'secret'
 app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/word_db')
 app.permanent_session_lifetime = timedelta(minutes=30)
