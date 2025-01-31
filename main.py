@@ -9,11 +9,13 @@ import os
 import joblib
 from dotenv import load_dotenv
 from bson import ObjectId
+from flask_socketio import SocketIO, join_room, leave_room, send
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 app.secret_key = 'secret'
 app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/word_db')
@@ -25,6 +27,7 @@ words_collection = mongo.db.words
 history_collection = mongo.db.history
 saved_words_collection = mongo.db.saved_words
 flashcard_sets_collection = mongo.db.flashcard_sets
+chat_collection = mongo.db.chats
 
 MODEL_PATH = "model/language_model.pkl"
 VECTORIZER_PATH = "model/vectorizer.pkl"
@@ -373,6 +376,42 @@ def detect_language():
 @app.route('/detect-language')
 def detect_language_page():
     return render_template('detect_language.html')
+
+# ------------------- CHAT -------------------
+@app.route('/chat')
+def chat():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    return render_template('chat.html')
+
+@socketio.on('join')
+def handle_join(data):
+    room = data['room']
+    username = session.get('user', 'Anonim')
+    join_room(room)
+    send({'username': 'System', 'message': f'{username} dołączył do pokoju.'}, room=room)
+
+@socketio.on('leave')
+def handle_leave(data):
+    room = data['room']
+    username = session.get('user', 'Anonim')
+    leave_room(room)
+    send({'username': 'System', 'message': f'{username} opuścił pokój.'}, room=room)
+
+@socketio.on('message')
+def handle_message(data):
+    room = data['room']
+    username = session.get('user', 'Anonim')
+    message = data['message']
+
+    chat_collection.insert_one({'room': room, 'username': username, 'message': message})
+
+    send({'username': username, 'message': message}, room=room)
+
+@app.route('/get_messages/<room>')
+def get_messages(room):
+    messages = list(chat_collection.find({'room': room}, {'_id': 0, 'username': 1, 'message': 1}))
+    return jsonify(messages)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
