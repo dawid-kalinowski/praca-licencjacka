@@ -44,6 +44,15 @@
             </li>
         {% endfor %}
     </ul>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
     <a href="#" onclick="startSavedWordsQuiz('{{ set_id }}')" class="quiz-button">Quiz z tego zestawu</a>
     <a href="{{ url_for('flashcards_home') }}">Powrót</a>
 </body>
