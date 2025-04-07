@@ -13,6 +13,15 @@
         <input type="text" name="set_name" required>
         <button type="submit">Utwórz</button>
     </form>
+    {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="flashes">
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
     <a href="{{ url_for('flashcards_home') }}">Powrót</a>
 </body>
 </html>

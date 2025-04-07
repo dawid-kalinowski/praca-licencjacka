@@ -85,6 +85,10 @@ def test_delete_word(client):
     assert response.status_code == 200
     assert response.json['message'] == 'Słowo usunięte'
 
+
+
+
+
 def test_flashcard_set_flow(client):
     client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
 
@@ -115,6 +119,18 @@ def test_flashcard_set_flow(client):
     # Usuń zestaw
     response = client.post('/delete_set', data={'set_id': str(flashcard_set['_id'])}, follow_redirects=True)
     assert 'Zestaw usunięty' in response.data.decode('utf-8')
+
+
+
+
+
+
+
+
+
+
+
+
 
 def test_detect_language(client):
     response = client.post('/detect-language', json={'text': 'Hello, how are you?'})
