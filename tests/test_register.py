@@ -22,7 +22,7 @@ def client(app):
     return app.test_client()
 
 def test_register_success_message(client):
-    username = f"testuser_{uuid.uuid4().hex[:8]}qqqq"
+    username = f"testuser_{uuid.uuid4().hex[:8]}"
     response = client.post('/register', data={
         'username': f'{username}',
         'password': 'testpass',
@@ -30,8 +30,32 @@ def test_register_success_message(client):
     }, follow_redirects=True)
     assert 'Rejestracja zakończona sukcesem. Możesz się teraz zalogować.' in response.data.decode('utf-8')
 
+def test_register_invalid_second_password(client):
+    username = f"testuser_{uuid.uuid4().hex[:8]}"
+    response = client.post('/register', data={
+        'username': f'{username}',
+        'password': 'testpass',
+        'second_password': 'testpass1'
+    }, follow_redirects=True)
+    assert 'Hasła nie są takie same!' in response.data.decode('utf-8')
+
+def test_register_double_username(client):
+    username = f"testuser_{uuid.uuid4().hex[:8]}"
+    response1 = client.post('/register', data={
+        'username': f'{username}',
+        'password': 'testpass',
+        'second_password': 'testpass'
+    }, follow_redirects=True)
+    response = client.post('/register', data={
+        'username': f'{username}',
+        'password': 'testpass',
+        'second_password': 'testpass'
+    }, follow_redirects=True)
+    assert 'Nazwa użytkownika jest już zajęta.' in response.data.decode('utf-8')
+
+
 def test_register_success_code(client):
-    username = f"testuser_{uuid.uuid4().hex[:8]}qqqq"
+    username = f"testuser_{uuid.uuid4().hex[:8]}"
     response = client.post('/register', data={
         'username': f'{username}',
         'password': 'testpass',
@@ -45,6 +69,13 @@ def test_login_success_message(client):
         'password': 'testpass'
     }, follow_redirects=True)
     assert 'Zalogowano pomyślnie' in response.data.decode('utf-8')
+
+def test_login_incorrect_username(client):
+    response = client.post('/login', data={
+        'username': 'testuser',
+        'password': 'testpass1'
+    }, follow_redirects=True)
+    assert 'Nieprawidłowa nazwa użytkownika lub hasło.' in response.data.decode('utf-8')
 
 
 def test_login_success_code(client):
