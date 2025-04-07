@@ -38,6 +38,58 @@ def test_check_word_not_logged_in_message(client):
     data = response.get_json()
     assert data['error'] == 'Musisz być zalogowany'
 
+def test_check_word_correct_code(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    response = client.post('/check_word', json={'answer': 'Cat', 'word': {'english': 'Cat', 'polish': 'Kot'}})
+    assert response.status_code == 200
+
+def test_check_word_correct_data_iscorrect(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    response = client.post('/check_word', json={'answer': 'Cat', 'word': {'english': 'Cat', 'polish': 'Kot'}})
+    data = response.get_json()
+    assert data['correct'] is True
+
+
+def test_check_word_correct_data_youranswer(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    response = client.post('/check_word', json={'answer': 'Cat', 'word': {'english': 'Cat', 'polish': 'Kot'}})
+    data = response.get_json()
+    assert data['your_answer'] == 'Cat'
+
+
+def test_check_word_correct_data_correctanswer(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    response = client.post('/check_word', json={'answer': 'Cat', 'word': {'english': 'Cat', 'polish': 'Kot'}})
+    data = response.get_json()
+    assert data['correct_answer'] == 'Cat'
+
+def test_check_word_saves_to_history(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    response = client.post('/check_word', json={'answer': 'Cat', 'word': {'english': 'Cat', 'polish': 'Kot'}})
+    from main import history_collection
+    record = history_collection.find_one({
+        'username': 'testuser',
+        'word': 'Cat',
+        'your_answer': 'Cat',
+        'correct': True
+    })
+    assert record is not None
+
+
+def test_save_word_not_logged_in_code(client):
+    from main import words_collection
+    word_id = words_collection.insert_one({'english': 'apple', 'polish': 'jabłko'}).inserted_id
+    response = client.post('/save_word', json={'word_id': str(word_id)})
+    assert response.status_code == 401
+
+def test_save_word_not_logged_in_message(client):
+    from main import words_collection
+    word_id = words_collection.insert_one({'english': 'apple', 'polish': 'jabłko'}).inserted_id
+    response = client.post('/save_word', json={'word_id': str(word_id)})
+    data = response.get_json()
+    assert data['error'] == 'Musisz być zalogowany'
+
+
 def test_save_word_word_code(client):
     client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
     from main import words_collection
@@ -58,7 +110,7 @@ def test_save_word_code(client):
     from main import words_collection
     word_id = words_collection.insert_one({'english': 'apple', 'polish': 'jabłko'}).inserted_id
     client.post('/save_word', json={'word_id': str(word_id)})
-    response = client.get('/get_saved_words')
+    response = client.get('/saved_words')
     assert response.status_code == 200
 
 
@@ -77,6 +129,23 @@ def test_save_word_code(client):
     client.post('/save_word', json={'word_id': str(word_id)})
     response = client.get('/get_saved_words')
     assert any(w['english'] == 'apple' for w in response.json)
+
+
+def test_get_save_word_message(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    from main import words_collection
+    word_id = words_collection.insert_one({'english': 'apple', 'polish': 'jabłko'}).inserted_id
+    response = client.post('/save_word', json={'word_id': str(word_id)})
+    assert response.json['message'] == 'Słowo zapisane'
+
+def test_get_save_word_code(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    from main import words_collection
+    word_id = words_collection.insert_one({'english': 'apple', 'polish': 'jabłko'}).inserted_id
+    client.post('/save_word', json={'word_id': str(word_id)})
+    response = client.get('/get_saved_words')
+    assert response.status_code == 200
+
 
 
 def test_delete_word_not_logged_in_code(client):
