@@ -7,6 +7,15 @@
 </head>
 <body>
     <h1>Witaj!</h1>
+    {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="flashes">
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+    {% endwith %}
     <div class="button-container">
         <a href="{{ url_for('login') }}"><button class="custom-button">Zaloguj</button></a>
         <a href="{{ url_for('register') }}"><button class="custom-button">Zarejestruj</button></a>

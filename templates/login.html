@@ -8,6 +8,15 @@
 <body>
     <div class="login-container">
         <h1>Logowanie</h1>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="flashes">
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
         <form method="POST" class="login-form">
             <input type="text" name="username" placeholder="Nazwa użytkownika" required><br>
             <input type="password" name="password" placeholder="Hasło" required><br>

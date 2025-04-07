@@ -3,11 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Panel użytkownika</title>
-    <link rel="stylesheet" href="/static/css/user_panel.css"> <!-- Nowy plik CSS dla panelu użytkownika -->
+    <link rel="stylesheet" href="/static/css/user_panel.css">
 </head>
 <body>
     <div class="user-panel-container">
         <h1>Witaj, {{ username }}!</h1>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+              <ul class="flashes">
+                {% for message in messages %}
+                  <li>{{ message }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+        {% endwith %}
         <div class="button-container">
             <a href="{{ url_for('quiz_page') }}" class="panel-button">Rozpocznij quiz</a>
             <a href="{{ url_for('quiz_history') }}" class="panel-button">Historia quizów</a>
