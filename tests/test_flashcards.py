@@ -9,6 +9,7 @@ from flask_pymongo import PyMongo
 import json
 from bson import ObjectId
 import uuid
+from unittest.mock import patch
 
 @pytest.fixture
 def app():
@@ -80,3 +81,47 @@ def test_create_set_success_code(client):
     client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
     response = client.post('/create_set', data={'set_name': 'Mój zestaw'}, follow_redirects=True)
     assert response.status_code == 200
+
+def test_add_word_to_set_not_logged_in_code(client):
+    response = client.post('/add_word_to_set', data={})
+    assert response.status_code == 401
+
+def test_add_word_to_set_not_logged_in_message(client):
+    response = client.post('/add_word_to_set', data={})
+    data = response.get_json()
+    assert data['error'] == 'Musisz być zalogowany'
+
+def test_add_word_missing_fields(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    response = client.post('/add_word_to_set', data={
+        'set_id': '123', 
+    }, follow_redirects=True)
+
+    assert 'Wszystkie pola są wymagane' in response.get_data(as_text=True)
+
+def test_add_word_invalid_set_id(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    response = client.post('/add_word_to_set', data={
+        'set_id': 'invalid_id!',
+        'polish': 'dom',
+        'english': 'house',
+    }, follow_redirects=True)
+
+    assert 'Nieprawidłowy identyfikator zestawu' in response.get_data(as_text=True)
+
+@patch('main.flashcard_sets_collection.update_one')
+def test_add_word_success(mock_update_one, client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    valid_id = str(ObjectId())
+
+    response = client.post('/add_word_to_set', data={
+        'set_id': valid_id,
+        'polish': 'kot',
+        'english': 'cat',
+    }, follow_redirects=True)
+
+    mock_update_one.assert_called_once_with(
+        {'_id': ObjectId(valid_id)},
+        {'$push': {'words': {'polish': 'kot', 'english': 'cat'}}}
+    )
+    assert 'Słowo dodane' in response.get_data(as_text=True)
