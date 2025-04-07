@@ -125,3 +125,96 @@ def test_add_word_success(mock_update_one, client):
         {'$push': {'words': {'polish': 'kot', 'english': 'cat'}}}
     )
     assert 'Słowo dodane' in response.get_data(as_text=True)
+
+def test_get_set_words_redirect_if_not_logged_in_code(client):
+    response = client.get('/get_set_words/123')
+    assert response.status_code == 302
+
+
+def test_get_set_words_redirect_if_not_logged_in_location(client):
+    response = client.get('/get_set_words/123')
+    assert '/login' in response.headers['Location']
+
+def test_get_set_words_invalid_id_code(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    response = client.get('/get_set_words/invalid_id', follow_redirects=True)
+    assert response.status_code == 200
+
+
+def test_get_set_words_invalid_id_message(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    response = client.get('/get_set_words/invalid_id', follow_redirects=True)
+    assert 'Nieprawidłowy identyfikator zestawu' in response.get_data(as_text=True)
+
+
+def test_get_set_words_set_not_found_code(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    valid_id = str(ObjectId())
+    response = client.get(f'/get_set_words/{valid_id}', follow_redirects=True)
+    assert response.status_code == 200
+
+
+def test_get_set_words_set_not_found_message(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    valid_id = str(ObjectId())
+    response = client.get(f'/get_set_words/{valid_id}', follow_redirects=True)
+    assert 'Zestaw nie istnieje' in response.get_data(as_text=True)
+
+
+
+@patch('main.flashcard_sets_collection.find_one')
+def test_get_set_words_success_code(mock_find_one, client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    valid_id = str(ObjectId())
+    mock_find_one.return_value = {
+        '_id': ObjectId(valid_id),
+        'set_name': 'Testowy Zestaw',
+        'words': [{'polish': 'kot', 'english': 'cat'}, {'polish': 'pies', 'english': 'dog'}]
+    }
+
+    response = client.get(f'/get_set_words/{valid_id}', follow_redirects=False)
+
+    assert response.status_code == 200
+
+
+
+@patch('main.flashcard_sets_collection.find_one')
+def test_get_set_words_success_set(mock_find_one, client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    valid_id = str(ObjectId())
+    mock_find_one.return_value = {
+        '_id': ObjectId(valid_id),
+        'set_name': 'Testowy Zestaw',
+        'words': [{'polish': 'kot', 'english': 'cat'}, {'polish': 'pies', 'english': 'dog'}]
+    }
+
+    response = client.get(f'/get_set_words/{valid_id}', follow_redirects=False)
+    assert 'Testowy Zestaw' in response.get_data(as_text=True)
+
+
+@patch('main.flashcard_sets_collection.find_one')
+def test_get_set_words_success_polish(mock_find_one, client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    valid_id = str(ObjectId())
+    mock_find_one.return_value = {
+        '_id': ObjectId(valid_id),
+        'set_name': 'Testowy Zestaw',
+        'words': [{'polish': 'kot', 'english': 'cat'}, {'polish': 'pies', 'english': 'dog'}]
+    }
+
+    response = client.get(f'/get_set_words/{valid_id}', follow_redirects=False)
+    assert 'kot' in response.get_data(as_text=True)
+
+
+@patch('main.flashcard_sets_collection.find_one')
+def test_get_set_words_success_english(mock_find_one, client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    valid_id = str(ObjectId())
+    mock_find_one.return_value = {
+        '_id': ObjectId(valid_id),
+        'set_name': 'Testowy Zestaw',
+        'words': [{'polish': 'kot', 'english': 'cat'}, {'polish': 'pies', 'english': 'dog'}]
+    }
+
+    response = client.get(f'/get_set_words/{valid_id}', follow_redirects=False)
+    assert 'cat' in response.get_data(as_text=True)
