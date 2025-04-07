@@ -309,4 +309,3 @@ def test_get_set_words_for_quiz_success_words(mock_find_one, client):
     response_json = response.get_json()
     assert {'polish': 'kot', 'english': 'cat'} in response_json['words']
 
-    
