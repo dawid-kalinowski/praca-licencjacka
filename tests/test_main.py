@@ -1,4 +1,9 @@
 import pytest
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../model')))
+
 from main import app as flask_app
 from flask_pymongo import PyMongo
 import json

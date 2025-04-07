@@ -29,8 +29,9 @@ saved_words_collection = mongo.db.saved_words
 flashcard_sets_collection = mongo.db.flashcard_sets
 chat_collection = mongo.db.chats
 
-MODEL_PATH = "model/language_model.pkl"
-VECTORIZER_PATH = "model/vectorizer.pkl"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, 'model', 'language_model.pkl')
+VECTORIZER_PATH= os.path.join(BASE_DIR, 'model', 'vectorizer.pkl')
 
 model = joblib.load(MODEL_PATH)
 vectorizer = joblib.load(VECTORIZER_PATH)
