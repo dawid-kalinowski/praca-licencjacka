@@ -218,3 +218,95 @@ def test_get_set_words_success_english(mock_find_one, client):
 
     response = client.get(f'/get_set_words/{valid_id}', follow_redirects=False)
     assert 'cat' in response.get_data(as_text=True)
+
+
+def test_get_set_words_for_quiz_redirect_if_not_logged_in_code(client):
+    response = client.get('/get_set_words_for_quiz/123')
+    assert response.status_code == 302
+
+
+def test_get_set_words_for_quiz_redirect_if_not_logged_in_location(client):
+    response = client.get('/get_set_words_for_quiz/123')
+    assert '/login' in response.headers['Location']
+
+def test_get_set_words_for_quiz_invalid_id_code(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    response = client.get('/get_set_words_for_quiz/invalid_id', follow_redirects=True)
+    assert response.status_code == 200
+
+
+def test_get_set_words_for_quiz_invalid_id_message(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    response = client.get('/get_set_words_for_quiz/invalid_id', follow_redirects=True)
+    assert 'Nieprawidłowy identyfikator zestawu' in response.get_data(as_text=True)
+
+
+def test_get_set_words_for_quiz_set_not_found_code(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    valid_id = str(ObjectId())
+    response = client.get(f'/get_set_words_for_quiz/{valid_id}', follow_redirects=True)
+    assert response.status_code == 200
+
+
+def test_get_set_words_for_quiz_set_not_found_message(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    valid_id = str(ObjectId())
+    response = client.get(f'/get_set_words_for_quiz/{valid_id}', follow_redirects=True)
+    assert 'Zestaw nie istnieje' in response.get_data(as_text=True)
+
+@patch('main.flashcard_sets_collection.find_one')
+def test_get_set_words_for_quiz_success_code(mock_find_one, client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    valid_id = str(ObjectId())
+    mock_find_one.return_value = {
+        '_id': ObjectId(valid_id),
+        'set_name': 'Testowy Zestaw',
+        'words': [{'polish': 'kot', 'english': 'cat'}, {'polish': 'pies', 'english': 'dog'}]
+    }
+    
+    response = client.get(f'/get_set_words_for_quiz/{valid_id}', follow_redirects=False)
+    assert response.status_code == 200
+
+@patch('main.flashcard_sets_collection.find_one')
+def test_get_set_words_for_quiz_success_setname(mock_find_one, client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    valid_id = str(ObjectId())
+    mock_find_one.return_value = {
+        '_id': ObjectId(valid_id),
+        'set_name': 'Testowy Zestaw',
+        'words': [{'polish': 'kot', 'english': 'cat'}, {'polish': 'pies', 'english': 'dog'}]
+    }
+    
+    response = client.get(f'/get_set_words_for_quiz/{valid_id}', follow_redirects=False)
+    response_json = response.get_json()
+    assert response_json['set_name'] == 'Testowy Zestaw'
+
+@patch('main.flashcard_sets_collection.find_one')
+def test_get_set_words_for_quiz_success_nrwords(mock_find_one, client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    valid_id = str(ObjectId())
+    mock_find_one.return_value = {
+        '_id': ObjectId(valid_id),
+        'set_name': 'Testowy Zestaw',
+        'words': [{'polish': 'kot', 'english': 'cat'}, {'polish': 'pies', 'english': 'dog'}]
+    }
+    
+    response = client.get(f'/get_set_words_for_quiz/{valid_id}', follow_redirects=False)
+    response_json = response.get_json()
+    assert len(response_json['words']) == 2
+
+@patch('main.flashcard_sets_collection.find_one')
+def test_get_set_words_for_quiz_success_words(mock_find_one, client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    valid_id = str(ObjectId())
+    mock_find_one.return_value = {
+        '_id': ObjectId(valid_id),
+        'set_name': 'Testowy Zestaw',
+        'words': [{'polish': 'kot', 'english': 'cat'}, {'polish': 'pies', 'english': 'dog'}]
+    }
+    
+    response = client.get(f'/get_set_words_for_quiz/{valid_id}', follow_redirects=False)
+    response_json = response.get_json()
+    assert {'polish': 'kot', 'english': 'cat'} in response_json['words']
+
+    
