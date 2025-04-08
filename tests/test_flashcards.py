@@ -309,3 +309,111 @@ def test_get_set_words_for_quiz_success_words(mock_find_one, client):
     response_json = response.get_json()
     assert {'polish': 'kot', 'english': 'cat'} in response_json['words']
 
+def test_delete_set_not_logged_in_code(client):
+    response = client.post('/delete_set', data={})
+    assert response.status_code == 401
+
+def test_delete_set_not_logged_in_message(client):
+    response = client.post('/delete_set', data={})
+    data = response.get_json()
+    assert data['error'] == 'Musisz być zalogowany'
+
+
+def test_delete_set_invalid_set_id_message(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    response = client.post('/delete_set', data={
+        'set_id': 'invalid_id!',
+        'polish': 'dom',
+        'english': 'house',
+    }, follow_redirects=True)
+
+    assert 'Nieprawidłowy identyfikator zestawu' in response.get_data(as_text=True)
+
+
+def test_delete_set_invalid_set_id_location(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    
+    response = client.post('/delete_set', data={
+        'set_id': 'invalid_id!',
+        'polish': 'dom',
+        'english': 'house',
+    }, follow_redirects=False)
+
+    assert response.status_code == 302
+    assert '/flashcards' in response.headers['Location']
+
+def test_delete_set_success_code(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    test_set = {
+        '_id': ObjectId(),
+        'user': 'testuser',
+        'title': 'Testowy zestaw',
+        'cards': [{'polish': 'dom', 'english': 'house'}]
+    }
+
+    from main import flashcard_sets_collection
+    flashcard_sets_collection.insert_one(test_set)
+    response = client.post('/delete_set', data={
+        'set_id': str(test_set['_id']),
+    }, follow_redirects=False)
+
+    assert response.status_code == 302
+
+
+def test_delete_set_success_location(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    test_set = {
+        '_id': ObjectId(),
+        'user': 'testuser',
+        'title': 'Testowy zestaw',
+        'cards': [{'polish': 'dom', 'english': 'house'}]
+    }
+
+    from main import flashcard_sets_collection
+    flashcard_sets_collection.insert_one(test_set)
+    response = client.post('/delete_set', data={
+        'set_id': str(test_set['_id']),
+    }, follow_redirects=False)
+
+    assert '/flashcards' in response.headers['Location']
+
+
+def test_delete_set_success_none(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    test_set = {
+        '_id': ObjectId(),
+        'user': 'testuser',
+        'title': 'Testowy zestaw',
+        'cards': [{'polish': 'dom', 'english': 'house'}]
+    }
+
+    from main import flashcard_sets_collection
+    flashcard_sets_collection.insert_one(test_set)
+    response = client.post('/delete_set', data={
+        'set_id': str(test_set['_id']),
+    }, follow_redirects=False)
+
+    assert flashcard_sets_collection.find_one({'_id': test_set['_id']}) is None
+
+def test_delete_set_success_message(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    test_set = {
+        '_id': ObjectId(),
+        'user': 'testuser',
+        'title': 'Testowy zestaw',
+        'cards': [{'polish': 'dom', 'english': 'house'}]
+    }
+
+    from main import flashcard_sets_collection
+    flashcard_sets_collection.insert_one(test_set)
+    response = client.post('/delete_set', data={
+        'set_id': str(test_set['_id']),
+    }, follow_redirects=True)
+
+    assert 'Zestaw usunięty' in response.get_data(as_text=True)
+
+
+
+
+
+

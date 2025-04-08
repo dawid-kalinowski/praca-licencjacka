@@ -324,6 +324,7 @@ def delete_set():
     except:
         flash('Nieprawidłowy identyfikator zestawu')
         return redirect(url_for('flashcards_home'))
+
     
     flashcard_sets_collection.delete_one({'_id': set_object_id})
     flash('Zestaw usunięty')
