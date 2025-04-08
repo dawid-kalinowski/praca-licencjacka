@@ -383,7 +383,7 @@ def detect_language_page():
 @app.route('/chat')
 def chat():
     if 'user' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('login'), code = 401)
     return render_template('chat.html')
 
 @socketio.on('join')
