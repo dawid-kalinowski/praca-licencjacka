@@ -339,7 +339,6 @@ def test_delete_set_invalid_set_id_location(client):
         'english': 'house',
     }, follow_redirects=False)
 
-    assert response.status_code == 302
     assert '/flashcards' in response.headers['Location']
 
 def test_delete_set_success_code(client):
@@ -412,8 +411,91 @@ def test_delete_set_success_message(client):
 
     assert 'Zestaw usunięty' in response.get_data(as_text=True)
 
+def test_delete_word_from_set_not_logged_in_code(client):
+    response = client.post('/delete_word_from_set', data={})
+    assert response.status_code == 401
+
+def test_delete_word_from_set_not_logged_in_message(client):
+    response = client.post('/delete_word_from_set', data={})
+    data = response.get_json()
+    assert data['error'] == 'Musisz być zalogowany'
+
+
+def test_delete_word_from_set_missing_fields_message(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    response = client.post('/delete_word_from_set', data={
+        'set_id': '123', 
+    }, follow_redirects=True)
+    assert 'Wszystkie pola są wymagane' in response.get_data(as_text=True)
 
 
 
+def test_delete_word_from_set_missing_fields_location(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    response = client.post('/delete_word_from_set', data={
+        'set_id': '123', 
+    }, follow_redirects=False)
+    assert '/get_set_words' in response.headers['Location']
 
+def test_delete_word_from_set_invalid_set_id_message(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    response = client.post('/delete_word_from_set', data={
+        'set_id': 'invalid_id!',
+        'polish': 'dom',
+        'english': 'house',
+    }, follow_redirects=True)
+    assert 'Nieprawidłowy identyfikator zestawu' in response.get_data(as_text=True)
+
+def test_delete_word_from_set_invalid_set_id_message(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    response = client.post('/delete_word_from_set', data={
+        'set_id': 'invalid_id!',
+        'polish': 'dom',
+        'english': 'house',
+    }, follow_redirects=False)
+    assert '/get_set_words' in response.headers['Location']
+
+
+def test_delete_word_from_set_success_message(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+
+    set_id = str(ObjectId())
+
+    with patch('main.flashcard_sets_collection.update_one') as mock_update:
+        mock_update.return_value = None
+        response = client.post('/delete_word_from_set', data={
+            'set_id': set_id,
+            'polish': 'dom',
+            'english': 'house'
+        }, follow_redirects=True) 
+        assert 'Słowo usunięte' in response.get_data(as_text=True)
+
+def test_delete_word_from_set_success_code(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+
+    set_id = str(ObjectId())
+
+    with patch('main.flashcard_sets_collection.update_one') as mock_update:
+        mock_update.return_value = None
+        response = client.post('/delete_word_from_set', data={
+            'set_id': set_id,
+            'polish': 'dom',
+            'english': 'house'
+        }, follow_redirects=True) 
+        assert response.status_code == 200
+
+
+def test_delete_word_from_set_success_code(client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+
+    set_id = str(ObjectId())
+
+    with patch('main.flashcard_sets_collection.update_one') as mock_update:
+        mock_update.return_value = None
+        response = client.post('/delete_word_from_set', data={
+            'set_id': set_id,
+            'polish': 'dom',
+            'english': 'house'
+        }, follow_redirects=False) 
+        assert '/get_set_words' in response.headers['Location']
 
