@@ -89,15 +89,6 @@ def test_save_word_not_logged_in_message(client):
     data = response.get_json()
     assert data['error'] == 'Musisz być zalogowany'
 
-
-def test_save_word_word_code(client):
-    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
-    from main import words_collection
-    word_id = words_collection.insert_one({'english': 'apple', 'polish': 'jabłko'}).inserted_id
-    response = client.post('/save_word', json={'word_id': str(word_id)})
-    assert response.status_code == 200
-
-
 def test_save_word_message(client):
     client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
     from main import words_collection
@@ -122,7 +113,7 @@ def test_save_word_type(client):
     response = client.get('/get_saved_words')
     assert isinstance(response.json, list)
 
-def test_save_word_code(client):
+def test_save_word_code_word(client):
     client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
     from main import words_collection
     word_id = words_collection.insert_one({'english': 'apple', 'polish': 'jabłko'}).inserted_id

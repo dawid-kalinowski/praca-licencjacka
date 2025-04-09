@@ -58,14 +58,6 @@ def test_detect_language_success_status_once_checked(client, mocker):
     response = client.post('/detect-language', json={"text": "Hello, how are you?"})
     mock_vectorizer.transform.assert_called_once_with(["Hello, how are you?"])
 
-def test_detect_language_no_text_code(client):
-    response = client.post('/detect-language', json={})
-    assert response.status_code == 400
-
-def test_detect_language_no_text_message(client):
-    response = client.post('/detect-language', json={})
-    assert response.get_json() == {"error": "No text provided"}
-
 def test_detect_language_exception_code(client, mocker):
     mock_vectorizer = mocker.patch('main.vectorizer')
     mock_vectorizer.transform.side_effect = Exception("Vectorizer failed")

@@ -110,7 +110,7 @@ def test_add_word_invalid_set_id(client):
     assert 'Nieprawidłowy identyfikator zestawu' in response.get_data(as_text=True)
 
 @patch('main.flashcard_sets_collection.update_one')
-def test_add_word_success(mock_update_one, client):
+def test_add_word_success_bd(mock_update_one, client):
     client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
     valid_id = str(ObjectId())
 
@@ -124,7 +124,30 @@ def test_add_word_success(mock_update_one, client):
         {'_id': ObjectId(valid_id)},
         {'$push': {'words': {'polish': 'kot', 'english': 'cat'}}}
     )
+
+@patch('main.flashcard_sets_collection.update_one')
+def test_add_word_success_message(mock_update_one, client):
+    client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
+    valid_id = str(ObjectId())
+
+    response = client.post('/add_word_to_set', data={
+        'set_id': valid_id,
+        'polish': 'kot',
+        'english': 'cat',
+    }, follow_redirects=True)
     assert 'Słowo dodane' in response.get_data(as_text=True)
+
+
+
+
+
+
+
+
+
+
+
+
 
 def test_get_set_words_redirect_if_not_logged_in_code(client):
     response = client.get('/get_set_words/123')
@@ -446,7 +469,7 @@ def test_delete_word_from_set_invalid_set_id_message(client):
     }, follow_redirects=True)
     assert 'Nieprawidłowy identyfikator zestawu' in response.get_data(as_text=True)
 
-def test_delete_word_from_set_invalid_set_id_message(client):
+def test_delete_word_from_set_invalid_set_id_location(client):
     client.post('/login', data={'username': 'testuser', 'password': 'testpass'})
     response = client.post('/delete_word_from_set', data={
         'set_id': 'invalid_id!',
@@ -498,4 +521,3 @@ def test_delete_word_from_set_success_code(client):
             'english': 'house'
         }, follow_redirects=False) 
         assert '/get_set_words' in response.headers['Location']
-
