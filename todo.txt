@@ -1,4 +1,7 @@
 Ważne:
+- Aplikacja powinna działać również lokalnie, bez logowania i bazy danych. Wtedy nasze zestawy zapisane są w pewnym pliku
+
+
 -  możliwość podzielenia słów na zestawy, że np. zestaw 1, zestaw 2, i uzytkownik dodaje sobie słowa. I bez znaczenia jaki język, użytkownik dodaje sobie jakie chce.
 Poniżej podpunkty jak to osiągnąć:
     - użytkownik ma możliwość dodania słowa do bazy danych
