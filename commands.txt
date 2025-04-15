@@ -1,5 +1,5 @@
 docker run -d --name mongodb -p 27017:27017 mongo:latest           // zainstalowanie bazy w dockerze
-mongo        // logowanie do bazy z poziomu dockera
+mongosh        // logowanie do bazy z poziomu dockera
 
 db.words.insertMany([                           // dodanie słów
     { polish: "dom", english: "house" },
@@ -8,7 +8,7 @@ db.words.insertMany([                           // dodanie słów
     { polish: "drzewo", english: "tree" },
     { polish: "człowiek", english: "human" }
 ])
-
+db.createCollection("users")
 
 
 
@@ -16,5 +16,5 @@ db.words.insertMany([                           // dodanie słów
 
 zawartość pliku .env:
 
-MONGO_URI=mongodb://localhost:27017/
+MONGO_URI=mongodb://localhost:27017/word_db
 DB_NAME=word_db
