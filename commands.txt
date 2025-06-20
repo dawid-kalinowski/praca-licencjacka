@@ -1,21 +1,26 @@
 docker run -d --name mongodb -p 27017:27017 mongo:latest           // zainstalowanie bazy w dockerze
+
+W przypadku, gdy na komputerze port 27017 jest zajęty, można użyć dowolnego innego, wtedy polecenie będzie wyglądało następująco:
+
+docker run -d --name mongodb -p xxxx:27017 mongo:latest, ale zamiast xxxx wpisać docelowy port
+
 mongosh        // logowanie do bazy z poziomu dockera
 
 ---DB---
-db.words.insertMany([                           // dodanie słów
+use word_db                                    // tworzenie i przełączenie się na swoją bazę word_db
+db.words.insertMany([                           // dodanie słów do kolekcji words
     { polish: "dom", english: "house" },
     { polish: "pies", english: "dog" },
     { polish: "kot", english: "cat" },
     { polish: "drzewo", english: "tree" },
     { polish: "człowiek", english: "human" }
 ])
-db.createCollection("users")
 ---DB---
-
-
 
 
 zawartość pliku .env (w celu uruchomienia aplikacji lokalnie):
 
-MONGO_URI=mongodb://localhost:27017/word_db
-DB_NAME=word_db
+MONGO_URI=mongodb://localhost:port/word_db
+PORT_APP= 
+
+jako PORT_APP trzeba wpisać port, na którym będzie  dostępna aplikacja

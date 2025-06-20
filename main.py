@@ -36,6 +36,7 @@ VECTORIZER_PATH= os.path.join(BASE_DIR, 'model', 'vectorizer.pkl')
 model = joblib.load(MODEL_PATH)
 vectorizer = joblib.load(VECTORIZER_PATH)
 
+port = os.getenv("PORT_APP")
 @app.route('/')
 def home():
     if 'user' in session:
@@ -411,4 +412,4 @@ def get_messages(room):
     return jsonify(messages)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=port)
