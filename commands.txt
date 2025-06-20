@@ -1,6 +1,7 @@
 docker run -d --name mongodb -p 27017:27017 mongo:latest           // zainstalowanie bazy w dockerze
 mongosh        // logowanie do bazy z poziomu dockera
 
+---DB---
 db.words.insertMany([                           // dodanie słów
     { polish: "dom", english: "house" },
     { polish: "pies", english: "dog" },
@@ -9,7 +10,7 @@ db.words.insertMany([                           // dodanie słów
     { polish: "człowiek", english: "human" }
 ])
 db.createCollection("users")
-
+---DB---
 
 
 
