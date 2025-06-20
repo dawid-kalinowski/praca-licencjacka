@@ -14,7 +14,7 @@ db.createCollection("users")
 
 
 
-zawartość pliku .env:
+zawartość pliku .env (w celu uruchomienia aplikacji lokalnie):
 
 MONGO_URI=mongodb://localhost:27017/word_db
 DB_NAME=word_db

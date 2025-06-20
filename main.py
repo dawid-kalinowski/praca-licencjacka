@@ -226,7 +226,6 @@ def flashcards_home():
     user_sets = list(flashcard_sets_collection.find({'username': session['user']}))
     return render_template('flashcards.html', sets=user_sets)
 
-# Tworzenie nowego zestawu fiszek
 @app.route('/create_set', methods=['GET', 'POST'])
 def create_set():
     if 'user' not in session:
@@ -245,7 +244,6 @@ def create_set():
     
     return render_template('create_set.html')
 
-# Dodawanie słowa do zestawu
 @app.route('/add_word_to_set', methods=['POST'])
 def add_word_to_set():
     if 'user' not in session:
@@ -272,7 +270,6 @@ def add_word_to_set():
     flash('Słowo dodane')
     return redirect(url_for('get_set_words', set_id=set_id))
 
-# Pobieranie słów z konkretnego zestawu
 @app.route('/get_set_words/<set_id>', methods=['GET'])
 def get_set_words(set_id):
     if 'user' not in session:
@@ -330,7 +327,6 @@ def delete_set():
     flash('Zestaw usunięty')
     return redirect(url_for('flashcards_home'))
 
-# Usuwanie słowa z zestawu
 @app.route('/delete_word_from_set', methods=['POST'])
 def delete_word_from_set():
     if 'user' not in session:

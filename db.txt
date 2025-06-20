@@ -1,9 +1,0 @@
-db.words.insertMany([
-    { polish: "dom", english: "house" },
-    { polish: "pies", english: "dog" },
-    { polish: "kot", english: "cat" },
-    { polish: "drzewo", english: "tree" },
-    { polish: "człowiek", english: "human" }
-])
-
-db.createCollection("users")

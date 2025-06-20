@@ -9,7 +9,7 @@
     <script>
         let socket;
         let room = "global";
-        let username = "{{ session.get('username', 'Gość') }}"; // Pobierz nazwę użytkownika z sesji
+        let username = "{{ session.get('username', 'Gość') }}";
 
         function connectChat() {
             socket = io.connect('http://' + document.domain + ':' + location.port);
