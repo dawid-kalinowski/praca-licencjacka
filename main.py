@@ -217,7 +217,6 @@ def delete_word():
     return jsonify({'message': 'Słowo usunięte'})
 
 
-# Strona główna dla fiszek
 @app.route('/flashcards')
 def flashcards_home():
     if 'user' not in session:
