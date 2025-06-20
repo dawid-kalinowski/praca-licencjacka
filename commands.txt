@@ -21,6 +21,3 @@ db.words.insertMany([                           // dodanie słów do kolekcji wo
 zawartość pliku .env (w celu uruchomienia aplikacji lokalnie):
 
 MONGO_URI=mongodb://localhost:port/word_db
-PORT_APP= 
-
-jako PORT_APP trzeba wpisać port, na którym będzie  dostępna aplikacja

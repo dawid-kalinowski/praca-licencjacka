@@ -16,12 +16,11 @@ Należy stworzyć plik .env i uzupełnić danymi
 
 ```
 MONGO_URI=mongodb://localhost:27017/word_db
-PORT_APP= 
 ```
 
 W przypadku, gdy baza została uruchomiona na innym porcie niż 27017, należy to zmienić na ten port.
 
 W folderze głównym uruchamiamy program main.py komendą `python3 main.py`
 
-Aplikacja uruchamia się na porcie `127.0.0.1:PORT_APP`, zamiast PORT_APP należy wpisać port, który będzie podany w pliku .env
+Aplikacja uruchamia się na porcie `127.0.0.1:5000`
 
