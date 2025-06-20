@@ -9,8 +9,8 @@ W przypadku, gdy na komputerze port 27017 jest zajęty, można użyć dowolnego 
 
 Wchodzimy w utworzony kontener w Dockerze, wchodzimy w bazę danych za pomocą komendy `mongosh`, po czym wykonujemy wszystkie polecenia zapisane w sekcji `---DB---` pliku `commands.txt`
 
-Instalujemy wszystkie pakiety potrzebne do uruchomienia apliakcji:
-`pip install flask flask-cors flask-pymongo pymongo python-dotenv joblib flask-socketio`
+Instalujemy wszystkie pakiety potrzebne do uruchomienia aplikacji:
+`pip install flask flask-cors flask-pymongo pymongo python-dotenv joblib flask-socketio scikit-learn`
 
 Należy stworzyć plik .env i uzupełnić danymi
 
